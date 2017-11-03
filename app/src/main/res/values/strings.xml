@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Moodi</string>
+    <string name="button_ok">Absenden!</string>
+
+    <string name="app_description">App zur erfassung der Stimmung</string>
+    <string name="start_text">Bitte geben Sie Ihre momentane Stimmung ein!</string>
+</resources>

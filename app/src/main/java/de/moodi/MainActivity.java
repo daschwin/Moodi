@@ -64,7 +64,7 @@ public class MainActivity extends ActionBarActivity implements DownloadCallback 
     public void updateFromDownload(String result) {
         if (result != null) {
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-            System.out.println("Lukas: " + result);
+            System.out.println("Lukas result: " + result);
         } else {
             Toast.makeText(getApplicationContext(), "Connection error", Toast.LENGTH_SHORT).show();
             System.out.println("Lukas: Connection error");

@@ -27,12 +27,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import de.moodi.model.Mood;
 
 /**
  * Implementation of headless Fragment that runs an AsyncTask to fetch data from the network.
@@ -121,23 +125,6 @@ public class NetworkFragment extends Fragment {
      * Implementation of AsyncTask that runs a network operation on a background thread.
      */
     private class DownloadTask extends AsyncTask<String, Integer, DownloadTask.Result> {
-
-        /**
-         * Wrapper class that serves as a union of a result value and an exception. When the
-         * download task has completed, either the result value or exception can be a non-null
-         * value. This allows you to pass exceptions to the UI thread that were thrown during
-         * doInBackground().
-         */
-        class Result {
-            public String mResultValue;
-            public Exception mException;
-            public Result(String resultValue) {
-                mResultValue = resultValue;
-            }
-            public Result(Exception exception) {
-                mException = exception;
-            }
-        }
 
         /**
          * Cancel background network operation if we do not have network connectivity.
@@ -238,9 +225,14 @@ public class NetworkFragment extends Fragment {
                 //self build stuff
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Type", "application/json");
-                String myData = "{\"teamId\": \"test\", \"timestamp\": 1, \"userId\": \"test\", \"value\": 2}";
+                Mood mood = new Mood(100, "userId", "teamId");
+                Gson gson = new Gson();
+
+//                String myData = "{\"teamId\": \"test\", \"timestamp\": 1, \"userId\": \"test\", \"value\": 2}";
+//                System.out.println("Lukas myData: " + myData);
+                System.out.println("Lukas myGson: " + gson.toJsonTree(mood));
                 connection.setDoOutput(true);
-                connection.getOutputStream().write(myData.getBytes());
+                connection.getOutputStream().write(gson.toJson(mood).getBytes());
 
                 // Open communications link (network traffic occurs here).
                 connection.connect();
@@ -295,6 +287,25 @@ public class NetworkFragment extends Fragment {
                 result = new String(buffer, 0, numChars);
             }
             return result;
+        }
+
+        /**
+         * Wrapper class that serves as a union of a result value and an exception. When the
+         * download task has completed, either the result value or exception can be a non-null
+         * value. This allows you to pass exceptions to the UI thread that were thrown during
+         * doInBackground().
+         */
+        class Result {
+            public String mResultValue;
+            public Exception mException;
+
+            public Result(String resultValue) {
+                mResultValue = resultValue;
+            }
+
+            public Result(Exception exception) {
+                mException = exception;
+            }
         }
     }
 }

@@ -213,8 +213,8 @@ public class NetworkFragment extends Fragment {
                 // Timeout for reading InputStream arbitrarily set to 3000ms.
                 connection.setReadTimeout(3000);
                 // Timeout for connection.connect() arbitrarily set to 3000ms.
-                // set to 30sec to give heroku time to start up application
-                connection.setConnectTimeout(30000);
+                // set to 60sec to give heroku time to start up application
+                connection.setConnectTimeout(60000);
                 // For this use case, set HTTP method to GET.
                 connection.setRequestMethod("POST");
                 // Already true by default but setting just in case; needs to be true since this request

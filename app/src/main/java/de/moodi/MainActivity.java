@@ -2,16 +2,17 @@ package de.moodi;
 
 /**
  * Created by Daniel on 03.11.2017.
+ *
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements DownloadCallback {
@@ -28,26 +29,24 @@ public class MainActivity extends ActionBarActivity implements DownloadCallback 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "https://moodibackend.herokuapp.com/mood");
         startDownload();
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-        return false;
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.seekBar_stimmung:
-                startDownload();
-                return true;
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
         }
         return false;
     }
@@ -55,8 +54,8 @@ public class MainActivity extends ActionBarActivity implements DownloadCallback 
     private void startDownload() {
         if (!mDownloading && mNetworkFragment != null) {
             // Execute the async download.
-            mNetworkFragment.startDownload();
-            mDownloading = true;
+            //mNetworkFragment.startDownload();
+            //mDownloading = true;
         }
     }
 

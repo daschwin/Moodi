@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:title="@string/userId_settings"
+        android:key="@string/userId_settings_key"
+        android:defaultValue="@string/userId_settings_default"
+        android:inputType="textMultiLine" />
+
+    <EditTextPreference
+        android:title="@string/teamId_settings"
+        android:key="@string/teamId_settings_key"
+        android:defaultValue="@string/teamId_settings_default"
+        android:inputType="textMultiLine" />
+
+</PreferenceScreen>

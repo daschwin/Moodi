@@ -49,6 +49,7 @@ public class NetworkFragment extends Fragment {
     private DownloadCallback mCallback;
     private DownloadTask mDownloadTask;
     private String mUrlString;
+    private Mood mood;
 
     /**
      * Static initializer for NetworkFragment that sets the URL of the host it will be downloading
@@ -103,8 +104,10 @@ public class NetworkFragment extends Fragment {
 
     /**
      * Start non-blocking execution of DownloadTask.
+     *
      */
-    public void startDownload() {
+    public void startDownload(Mood mood) {
+        this.mood = mood;
         cancelDownload();
         mDownloadTask = new DownloadTask();
         mDownloadTask.execute(mUrlString);
@@ -225,7 +228,7 @@ public class NetworkFragment extends Fragment {
                 //self build stuff
                 connection.setRequestProperty("Accept", "application/json");
                 connection.setRequestProperty("Content-Type", "application/json");
-                Mood mood = new Mood(100, "userId", "teamId");
+                //Mood mood = new Mood(99, "newUserId", "teamId");
                 Gson gson = new Gson();
 
 //                String myData = "{\"teamId\": \"test\", \"timestamp\": 1, \"userId\": \"test\", \"value\": 2}";

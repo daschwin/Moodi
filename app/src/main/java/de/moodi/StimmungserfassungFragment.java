@@ -5,7 +5,6 @@ package de.moodi;
  *
  */
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,16 +18,18 @@ import android.widget.Toast;
 
 import de.moodi.model.Mood;
 
-public class StimmungserfassungFragment extends Fragment{
+public class StimmungserfassungFragment extends Fragment {
+    private static final String TAG = "StimmungserfassungFragment";
+    // Boolean telling us whether a download is in progress, so we don't trigger overlapping
+    // downloads with consecutive button clicks.
+    boolean mDownloading = false;
     // Keep a reference to the NetworkFragment which owns the AsyncTask object
     // that is used to execute network ops.
     private NetworkFragment mNetworkFragment;
 
-    // Boolean telling us whether a download is in progress, so we don't trigger overlapping
-    // downloads with consecutive button clicks.
-    private boolean mDownloading = false;
     public StimmungserfassungFragment() {
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,10 +62,18 @@ public class StimmungserfassungFragment extends Fragment{
     }
 
     private void startDownload(Mood mood) {
+//        System.out.println("!mDownloading: " + String.valueOf(!mDownloading));
         if (!mDownloading && mNetworkFragment != null) {
             // Execute the async download.
             mNetworkFragment.startDownload(mood);
             mDownloading = true;
+        }
+    }
+
+    public void finishDownloading() {
+        mDownloading = false;
+        if (mNetworkFragment != null) {
+            mNetworkFragment.cancelDownload();
         }
     }
 }

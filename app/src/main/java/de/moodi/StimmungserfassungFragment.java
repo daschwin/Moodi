@@ -5,7 +5,12 @@ package de.moodi;
  *
  */
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -16,9 +21,15 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.moodi.model.Mood;
 
 public class StimmungserfassungFragment extends Fragment {
+
+    List<Mood> storedMoods = new ArrayList<>();
+
     private static final String TAG = "StimmungserfassungFragment";
     // Boolean telling us whether a download is in progress, so we don't trigger overlapping
     // downloads with consecutive button clicks.
@@ -41,21 +52,29 @@ public class StimmungserfassungFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            // Auslesen der UserID aus den SharedPreferences
-            SharedPreferences sPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String prefUserIdKey = getString(R.string.userId_settings_key);
-            String prefUserIdDefault = getString(R.string.userId_settings_default);
-            String userId = sPrefs.getString(prefUserIdKey,prefUserIdDefault);
+                // Auslesen der UserID aus den SharedPreferences
+                SharedPreferences sPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String prefUserIdKey = getString(R.string.userId_settings_key);
+                String prefUserIdDefault = getString(R.string.userId_settings_default);
+                String userId = sPrefs.getString(prefUserIdKey,prefUserIdDefault);
 
-            // Auslesen der TeamID aus den SharedPreferences
-            String prefTeamIdKey = getString(R.string.teamId_settings_key);
-            String prefTeamIdDefault = getString(R.string.teamId_settings_default);
-            String teamId = sPrefs.getString(prefTeamIdKey,prefTeamIdDefault);
+                // Auslesen der TeamID aus den SharedPreferences
+                String prefTeamIdKey = getString(R.string.teamId_settings_key);
+                String prefTeamIdDefault = getString(R.string.teamId_settings_default);
+                String teamId = sPrefs.getString(prefTeamIdKey,prefTeamIdDefault);
 
-            SeekBar seekbar_stimmung = (SeekBar) v.getRootView().findViewById(R.id.seekBar_stimmung);
-            Mood mood = new Mood(seekbar_stimmung.getProgress(), userId, teamId);
-            startDownload(mood);
-            Toast.makeText(getActivity(), "Stimmung mit " + seekbar_stimmung.getProgress() + " Punkten Erfasst!", Toast.LENGTH_SHORT).show();
+                SeekBar seekbar_stimmung = (SeekBar) v.getRootView().findViewById(R.id.seekBar_stimmung);
+                Mood mood = new Mood(seekbar_stimmung.getProgress(), userId, teamId);
+                if(isOnline()){
+                    startDownload(mood);
+                    Toast.makeText(getActivity(), "Stimmung mit " + seekbar_stimmung.getProgress() + " Punkten Erfasst!", Toast.LENGTH_SHORT).show();
+
+                }else{
+                    storedMoods.add(mood);
+                    Toast.makeText(getActivity(), "Stimmung mit " + seekbar_stimmung.getProgress() + " Punkten Erfasst! Wird übertragen sobald eine Netzwerkverbindung besteht.", Toast.LENGTH_SHORT).show();
+
+                }
+
             }
         });
         return rootView;
@@ -74,6 +93,37 @@ public class StimmungserfassungFragment extends Fragment {
         mDownloading = false;
         if (mNetworkFragment != null) {
             mNetworkFragment.cancelDownload();
+        }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            final ConnectivityManager connMgr = (ConnectivityManager) context
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            final android.net.NetworkInfo wifi = connMgr
+                    .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+            final android.net.NetworkInfo mobile = connMgr
+                    .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if (wifi.isAvailable() || mobile.isAvailable()) {
+                Toast.makeText(context, "Netzwerkverbindung verfügbar!", Toast.LENGTH_SHORT).show();
+                /*for(Mood storedMood:storedMoods){
+                    startDownload(storedMood);
+                    Toast.makeText(context, "Gespeicherte Stimmung übertragen!", Toast.LENGTH_SHORT).show();
+                    storedMoods.remove(storedMood);
+                }*/
+            }
         }
     }
 }

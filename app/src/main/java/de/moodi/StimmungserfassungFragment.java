@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -23,7 +22,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +29,7 @@ import java.util.List;
 import de.moodi.model.Mood;
 
 public class StimmungserfassungFragment extends Fragment {
-
+    //storage for moods sent without Network connection
     List<Mood> storedMoods = new ArrayList<>();
 
     private static final String TAG = "StimmungserfassungFragment";

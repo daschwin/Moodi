@@ -2,17 +2,17 @@
     <string name="app_name">Moodi</string>
     <string name="button_ok">Absenden!</string>
 
-    <string name="app_description">App zur erfassung der Stimmung</string>
+    <string name="app_description">App zur Erfassung der Stimmung</string>
     <string name="start_text">Bitte geben Sie Ihre momentane Stimmung ein!</string>
 
     <string name="title_activity_settings">Einstellungen</string>
     <string name="action_settings">Einstellungen</string>
 
-    <string name="userId_settings">UserID</string>
-    <string name="userId_settings_key">UserID</string>
+    <string name="userId_settings">UserId</string>
+    <string name="userId_settings_key">UserId</string>
     <string name="userId_settings_default">User1</string>
 
-    <string name="teamId_settings">TeamID</string>
-    <string name="teamId_settings_key">TeamID</string>
-    <string name="teamId_settings_default">TeamID</string>
+    <string name="teamId_settings">TeamId</string>
+    <string name="teamId_settings_key">TeamId</string>
+    <string name="teamId_settings_default">Team1</string>
 </resources>

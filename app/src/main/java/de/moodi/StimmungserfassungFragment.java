@@ -8,9 +8,11 @@ package de.moodi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -21,7 +23,9 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.moodi.model.Mood;
@@ -44,6 +48,11 @@ public class StimmungserfassungFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+
+        NetworkChangeReceiver myReceiver = new NetworkChangeReceiver();
+        getContext().registerReceiver(myReceiver, filter);
+
         mNetworkFragment = NetworkFragment.getInstance(getActivity().getSupportFragmentManager(), "https://moodibackend.herokuapp.com/mood");
 
         //Toast.makeText(getActivity(), "StimmungserfassungsView geladen!", Toast.LENGTH_SHORT).show();
@@ -72,7 +81,6 @@ public class StimmungserfassungFragment extends Fragment {
                 }else{
                     storedMoods.add(mood);
                     Toast.makeText(getActivity(), "Stimmung mit " + seekbar_stimmung.getProgress() + " Punkten Erfasst! Wird übertragen sobald eine Netzwerkverbindung besteht.", Toast.LENGTH_SHORT).show();
-
                 }
 
             }
@@ -104,25 +112,14 @@ public class StimmungserfassungFragment extends Fragment {
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(final Context context, final Intent intent) {
-            final ConnectivityManager connMgr = (ConnectivityManager) context
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
-
-            final android.net.NetworkInfo wifi = connMgr
-                    .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-            final android.net.NetworkInfo mobile = connMgr
-                    .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-            if (wifi.isAvailable() || mobile.isAvailable()) {
-                Toast.makeText(context, "Netzwerkverbindung verfügbar!", Toast.LENGTH_SHORT).show();
-                /*for(Mood storedMood:storedMoods){
+            if (isOnline()) {
+                for(Mood storedMood:storedMoods){
                     startDownload(storedMood);
-                    Toast.makeText(context, "Gespeicherte Stimmung übertragen!", Toast.LENGTH_SHORT).show();
-                    storedMoods.remove(storedMood);
-                }*/
+                    Toast.makeText(getActivity(), "Stimmung vom" + new Date(storedMood.getTimestamp()).toString() + " übertragen", Toast.LENGTH_SHORT).show();
+                }
+                storedMoods.clear();
             }
         }
     }

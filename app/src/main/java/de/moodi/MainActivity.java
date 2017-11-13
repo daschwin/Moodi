@@ -61,11 +61,11 @@ public class MainActivity extends ActionBarActivity implements DownloadCallback 
     public void updateFromDownload(String result) {
         if (result != null) {
             Gson gson = new Gson();
-            Mood mood = gson.fromJson(result, Mood.class);
-
-            if (mood != null) {
+            try {
+                Mood mood = gson.fromJson(result, Mood.class);
                 Toast.makeText(getApplicationContext(), mood.toString(), Toast.LENGTH_LONG).show();
-            } else {
+            } catch (Exception e) {
+                System.err.println(e);
                 Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
             }
 
